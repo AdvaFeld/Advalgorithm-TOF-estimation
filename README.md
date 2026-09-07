@@ -1,5 +1,7 @@
 # Advalgorithm-TOF-estimation
+
 DEEP UNFOLDED WEIGHTED SPICE FOR RAPID AND ROBUST TOF ESTIMATION
+
 This repository contains the research implementation of AI-adided TOF estimation framework based on deep unfolding of the weighted-SPICE fmaily of sparse covariance based estimators.
 The objective is to combine the interpretability and model-based structure of classical methods such as SPICE, LIKES, and SLIM with data-driven learning, while maintaining a fixed and pre-controlled inference depth.
 
@@ -17,19 +19,19 @@ The proposed approach combines the model-based structure of the SPICE family wit
 
 The received frequency-domain signal is modeled as
 
-$$
+```math
 y_m=\sum_{c=1}^{C}\gamma_c e^{-j2\pi f_m\tau_c}+\epsilon_m,
-$$
+```
 
-where \(\tau_c\) is the delay of the \(c\)-th propagation path, \(\gamma_c\) is its complex coefficient, and \(\epsilon_m\) represents noise.
+where $\tau_c$ is the delay of the $c$-th propagation path, $\gamma_c$ is its complex coefficient, and $\epsilon_m$ represents noise.
 
 A discretized delay dictionary is constructed and augmented with an identity matrix,
 
-$$
+```math
 \bar{\mathbf A}=[\mathbf A,\mathbf I_M],
-$$
+```
 
-and the algorithms estimate an augmented power vector \(\mathbf p\), whose first \(K\) entries correspond to the delay grid.
+and the algorithms estimate an augmented power vector $\mathbf p$, whose first $K$ entries correspond to the delay grid.
 
 ---
 
@@ -37,7 +39,7 @@ and the algorithms estimate an augmented power vector \(\mathbf p\), whose first
 
 The classical SPICE-family update is based on
 
-$$
+```math
 p_k^{(i+1)}
 =
 p_k^{(i)}
@@ -46,27 +48,27 @@ p_k^{(i)}
 }{
 \sqrt{w_k^{(i)}}
 },
-$$
+```
 
 with
 
-$$
+```math
 \mathbf R
 =
 \bar{\mathbf A}
 \operatorname{diag}(\mathbf p)
 \bar{\mathbf A}^{H}.
-$$
+```
 
 The implemented model learns a combination of three weighting rules:
 
-* **SPICE:** \(w_k=\|\bar{\mathbf a}_k\|_2^2\)
-* **LIKES:** \(w_k=\bar{\mathbf a}_k^H\mathbf R^{-1}\bar{\mathbf a}_k\)
-* **SLIM:** \(w_k=1/p_k\)
+* **SPICE:** $w_k=\|\bar{\mathbf a}_k\|_2^2$
+* **LIKES:** $w_k=\bar{\mathbf a}_k^H\mathbf R^{-1}\bar{\mathbf a}_k$
+* **SLIM:** $w_k=1/p_k$
 
 At every unfolded layer,
 
-$$
+```math
 w_{\mathrm{mix}}
 =
 q_1w_{\mathrm{SPICE}}
@@ -74,9 +76,9 @@ q_1w_{\mathrm{SPICE}}
 q_2w_{\mathrm{LIKES}}
 +
 q_3w_{\mathrm{SLIM}},
-$$
+```
 
-where the coefficients \(q_1,q_2,q_3\) are learned and normalized using softmax.
+where the coefficients $q_1,q_2,q_3$ are learned and normalized using softmax.
 
 The current implementation uses **10 unfolded layers**.
 
@@ -93,19 +95,19 @@ A small MLP classifier receives the real and imaginary parts of the observed sig
 
 A sigmoid converts this logit into
 
-$$
+```math
 \pi=P(\text{non-baseline}\mid\mathbf y).
-$$
+```
 
 The final estimate is obtained through soft routing:
 
-$$
+```math
 \hat{\mathbf p}
 =
 (1-\pi)\hat{\mathbf p}_{\mathrm{baseline}}
 +
 \pi\hat{\mathbf p}_{\mathrm{piecewise}}.
-$$
+```
 
 Both experts are therefore evaluated and combined differentiably.
 
@@ -176,7 +178,7 @@ The proposed model is compared against classical Weighted-SPICE-family algorithm
 * SLIM
 * SLIM limited to 5 iterations
 
-The iterative benchmarks are evaluated with a maximum of 200 iterations and convergence tolerance of \(10^{-3}\).
+The iterative benchmarks are evaluated with a maximum of 200 iterations and convergence tolerance of $10^{-3}$.
 
 ---
 
