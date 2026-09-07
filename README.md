@@ -56,7 +56,7 @@ with
 \mathbf R
 =
 \bar{\mathbf A}
-\operatorname{diag}(\mathbf p)
+\mathrm{diag}(\mathbf p)
 \bar{\mathbf A}^{H}.
 ```
 
